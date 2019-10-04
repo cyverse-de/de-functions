@@ -1,0 +1,14 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: ${GATEWAY:-http://127.0.0.1:8080}
+functions:
+  get-analysis-id:
+    lang: golang-middleware
+    handler: ./get-analysis-id
+    image: discoenv/fn-get-analysis-id:${DOCKER_TAG:-latest}
+    labels:
+      com.openfaas.scale.zero: true
+    environment:
+      APPS_URL: http://${APPS_HOST:-apps}.${SERVICE_NAMESPACE:-prod}
+      APPS_USER: ${APPS_USER:-administrator}
