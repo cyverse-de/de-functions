@@ -10,7 +10,7 @@ functions:
     labels:
       com.openfaas.scale.zero: true
     environment:
-      resource_type: ${RESOURCE_TYPE:-analysis}
-      subject_type: ${SUBJECT_TYPE:-user}
-      permissions_url: ${PERMISSIONS_URL:-http://permissions}.${SERVICE_NAMESPACE:-prod}
+      RESOURCE_TYPE: ${RESOURCE_TYPE:-analysis}
+      SUBJECT_TYPE: ${SUBJECT_TYPE:-user}
+      PERMISSIONS_URL: http://${PERMISSIONS_HOST:-permissions}.${SERVICE_NAMESPACE:-prod}
     
