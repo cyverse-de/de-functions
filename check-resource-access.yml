@@ -1,0 +1,16 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  check-resource-access:
+    lang: golang-middleware
+    handler: ./check-resource-access
+    image: discoenv/fn-check-resource-access:${DOCKER_TAG:-latest}
+    labels:
+      com.openfaas.scale.zero: true
+    environment:
+      resource_type: ${RESOURCE_TYPE:-analysis}
+      subject_type: ${SUBJECT_TYPE:-user}
+      permissions_url: ${PERMISSIONS_URL:-http://permissions}.${SERVICE_NAMESPACE:-prod}
+    
