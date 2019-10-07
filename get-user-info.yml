@@ -1,0 +1,12 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: ${GATEWAY:-http://127.0.0.1:8080}
+functions:
+  get-user-info:
+    lang: golang-middleware
+    handler: ./get-user-info
+    image: discoenv/fn-get-user-info:${DOCKER_TAG:-latest}
+    environment:
+      IPLANT_GROUPS_URL: http://${IPLANT_GROUPS_HOST:-iplant-groups}.${SERVICE_NAMESPACE:-prod}
+      IPLANT_GROUPS_USER: ${IPLANT_GROUPS_USER:-grouper}
