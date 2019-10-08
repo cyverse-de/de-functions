@@ -7,10 +7,7 @@ functions:
     lang: golang-middleware
     handler: ./check-resource-access
     image: discoenv/fn-check-resource-access:${DOCKER_TAG:-latest}
-    labels:
-      com.openfaas.scale.zero: true
     environment:
       RESOURCE_TYPE: ${RESOURCE_TYPE:-analysis}
       SUBJECT_TYPE: ${SUBJECT_TYPE:-user}
       PERMISSIONS_URL: http://${PERMISSIONS_HOST:-permissions}.${SERVICE_NAMESPACE:-prod}
-    

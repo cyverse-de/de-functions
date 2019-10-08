@@ -7,8 +7,6 @@ functions:
     lang: golang-middleware
     handler: ./get-analysis-id
     image: discoenv/fn-get-analysis-id:${DOCKER_TAG:-latest}
-    labels:
-      com.openfaas.scale.zero: true
     environment:
       APPS_URL: http://${APPS_HOST:-apps}.${SERVICE_NAMESPACE:-prod}
       APPS_USER: ${APPS_USER:-administrator}

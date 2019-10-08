@@ -57,7 +57,7 @@ paths:
 
   /check-resource-access:
     post:
-      summary: Returns permissions that a subject has on a resource
+      summary: check-resource-access
       description: Returns permissions that a subject has on a resource
       requestBody:
         required: true
@@ -112,7 +112,7 @@ paths:
                               
   /get-analysis-id:
     post:
-      summary: Get Analysis UUID for an External UUID
+      summary: get-analysis-id
       description: Returns the Analysis UUID (the value of the jobs.id field in the database) for the provided external ID (which is actually what's shown in the UI).
       requestBody:
         required: true
