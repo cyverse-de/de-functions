@@ -1,45 +1,111 @@
-swagger: '2.0'
+openapi: 3.0.0
 info:
-  version: 1.0.0
   title: get-user-info
   description: Returns user info from Grouper and LDAP
-basePath: "/function"
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:31112/function
+    description: Local access on port 31112
+  - url: http://localhost:8080/function
+    description: Local access on port 8080
+  - url: http://gateway.openfaas:8080/function
+    description: In-cluster URL
+    
 paths:
   /get-user-info:
     post:
       summary: Returns user info from Grouper and LDAP
       description: Returns user info from Grouper and LDAP
-      parameters:
-        - in: body
-          name: username
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-                example: "username"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "username"
       responses:
-        200:
-          description: OK
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                example: "username"
-              name:
-                type: string
-                example: first last
-              first_name:
-                type: string
-                example: first
-              last_name:
-                type: string
-                example: last
-              email:
-                type: string
-                example: first.last@cyverse.fake.wut
-              institution:
-                type: string
-              source_id:
-                type: string
+        '200':
+          description: A JSON object containing user information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "username"
+                  name:
+                    type: string
+                    example: first last
+                  first_name:
+                    type: string
+                    example: first
+                  last_name:
+                    type: string
+                    example: last
+                  email:
+                    type: string
+                    example: first.last@cyverse.fake.wut
+                  institution:
+                    type: string
+                  source_id:
+                    type: string
+
+  /check-resource-access:
+    post:
+      summary: Returns permissions that a subject has on a resource
+      description: Returns permissions that a subject has on a resource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject:
+                  type: string
+                  example: username
+                resource:
+                  type: string
+                  example: analysis-uuid
+      responses:
+        '200':
+          description: A JSON object containing user information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  permissions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        permission_level:
+                          type: string
+                        resource:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                            resource_type:
+                              type: string
+                        subject:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            subject_id:
+                              type: string
+                            subject_source_id:
+                              type: string
+                            subject_type:
+                              type: string
