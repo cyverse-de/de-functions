@@ -3,7 +3,7 @@ provider:
   name: openfaas
   gateway: ${GATEWAY:-http://127.0.0.1:8080}
 functions:
-  docs:
+  redoc:
     lang: dockerfile
-    handler: ./docs
-    image: discoenv/docs:${DOCKER_TAG:-prod}
+    handler: ./redoc
+    image: discoenv/redoc:${DOCKER_TAG:-latest}
