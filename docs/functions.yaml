@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: get-user-info
-  description: Returns user info from Grouper and LDAP
+  title: Discovery Environment Functions
+  description: Function API documentation
   version: 1.0.0
 
 servers:
@@ -11,7 +11,121 @@ servers:
     description: Local access on port 8080
   - url: http://gateway.openfaas:8080/function
     description: In-cluster URL
-    
+
+components:
+  responses:
+    AnalysisIDList:
+      description: A list of Analysis IDs
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalysisIDs'
+
+  requestBodies:
+    AnalysisIDList:
+      description: A list of Analysis IDs
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalysisIDs'
+
+  schemas:
+    AnalysisIDs:
+      title: An object containing a list of Analysis UUIDs
+      type: object
+      properties:
+        analyses:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 04835ef5-fbf2-4d18-8926-376d571b6a9d
+
+    Username:
+      title: An object containing a username
+      type: object
+      properties:
+        username:
+          type: string
+          example: "test_user"
+
+    UserInformation:
+      title: An object containing information about a user
+      type: object
+      properties:
+        id:
+          type: string
+          example: "username"
+        name:
+          type: string
+          example: first last
+        first_name:
+          type: string
+          example: first
+        last_name:
+          type: string
+          example: last
+        email:
+          type: string
+          example: first.last@cyverse.fake.wut
+        institution:
+          type: string
+        source_id:
+          type: string
+
+    ResourcePermissions:
+      title: Details the permissions a subject has on a resource
+      type: object
+      properties:
+        permissions:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              permission_level:
+                type: string
+              resource:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resource_type:
+                    type: string
+              subject:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  subject_id:
+                    type: string
+                  subject_source_id:
+                    type: string
+                  subject_type:
+                    type: string
+
+    ExternalID:
+      title: Contains the external ID for a job step
+      type: object
+      properties:
+        external_id: 
+          type: string
+
+    SubjectResourceTuple:
+      title: A pairing of a subject and a resource
+      type: object
+      properties:
+        subject:
+          type: string
+          example: username
+        resource:
+          type: string
+          example: analysis-uuid
+
+
 paths:
   /get-user-info:
     post:
@@ -22,38 +136,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: "username"
+              $ref: '#/components/schemas/Username'
       responses:
         '200':
           description: A JSON object containing user information
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: "username"
-                  name:
-                    type: string
-                    example: first last
-                  first_name:
-                    type: string
-                    example: first
-                  last_name:
-                    type: string
-                    example: last
-                  email:
-                    type: string
-                    example: first.last@cyverse.fake.wut
-                  institution:
-                    type: string
-                  source_id:
-                    type: string
+                $ref: '#/components/schemas/UserInformation'
 
   /check-resource-access:
     post:
@@ -64,51 +154,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                subject:
-                  type: string
-                  example: username
-                resource:
-                  type: string
-                  example: analysis-uuid
+              $ref: '#/components/schemas/SubjectResourceTuple'
       responses:
         '200':
-          description: A JSON object containing user information
+          description: An object containing resource permissions
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  permissions:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        permission_level:
-                          type: string
-                        resource:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            name:
-                              type: string
-                            resource_type:
-                              type: string
-                        subject:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            subject_id:
-                              type: string
-                            subject_source_id:
-                              type: string
-                            subject_type:
-                              type: string
+                $ref: '#/components/schemas/ResourcePermissions'
                               
   /get-analysis-id:
     post:
@@ -119,10 +172,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                external_id: 
-                  type: string
+              $ref: '#/components/schemas/ExternalID'
       responses:
         '200':
           description: A JSON object containing the analysis UUID
@@ -133,4 +183,24 @@ paths:
                 properties:
                   id:
                     type: string
+
+  /vice-running-in-cluster:
+    get:
+      summary: vice-running-in-cluster
+      description: Returns a list of Analysis IDs for the VICE apps currently running in the cluster
+      responses:
+        '200':
+          $ref: '#/components/responses/AnalysisIDList'
+
+
+  /filter-running-analyses:
+    post:
+      summary: filter-running-analyses
+      description: Returns a filtered list of analysis UUIDs. It should not contain IDs for analyses that are marked as running by the apps service.
+      requestBody:
+        $ref: '#/components/requestBodies/AnalysisIDList'
+      responses:
+        '200':
+          $ref: '#/components/responses/AnalysisIDList'
+
                     
