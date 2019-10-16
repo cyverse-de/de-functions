@@ -22,8 +22,21 @@ class FunctionAPI extends RESTDataSource {
     }
 }
 
+class AppsAPI extends RESTDataSource {
+    constructor() {
+        super();
+        this.baseURL = process.env.APPS_URL;
+    }
+
+    async getUserInfo(username) {
+        const data = await this.get(`users/authenticated?user=${username}`);
+        return data.id;
+    }
+}
+
 const typeDefs = gql`
     type User {
+        id: String
         username: String
         name: String
         last_name: String
@@ -44,6 +57,12 @@ const resolvers = {
             return dataSources.functionAPI.getUserInfo(username);
         },
     },
+
+    User: {
+        id: async(user, _args, { dataSources }) => {
+            return dataSources.appsAPI.getUserInfo(user.username)
+        }
+    }
 };
     
 const server = new ApolloServer({
@@ -52,6 +71,7 @@ const server = new ApolloServer({
     dataSources: () => {
         return {
             functionAPI: new FunctionAPI(),
+            appsAPI: new AppsAPI(),
         };
     },
 });
