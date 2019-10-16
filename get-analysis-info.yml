@@ -1,0 +1,11 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: ${GATEWAY:-http://127.0.0.1:8080}
+functions:
+  get-analysis-info:
+    lang: python3-flask
+    handler: ./get-analysis-info
+    image: discoenv/fn-get-analysis-info:${DOCKER_TAG:-latest}
+    environment:
+      APPS_URL: http://${APPS_URL:-apps}.${SERVICE_NAMESPACE:-prod}
