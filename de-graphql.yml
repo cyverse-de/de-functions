@@ -1,9 +1,12 @@
 version: 1.0
 provider:
   name: openfaas
-  gateway: http://127.0.0.1:31112
+  gateway: ${GATEWAY:-http://127.0.0.1:8080}
 functions:
   de-graphql:
     lang: dockerfile
     handler: ./de-graphql
-    image: de-graphql:latest
+    image: discoenv/de-graphql:${DOCKER_TAG:-latest}
+    environment:
+      GATEWAY: ${GATEWAY:-http://127.0.0.1:8080}
+      APPS_URL: http://${APPS_URL:-apps}.${SERVICE_NAMESPACE:-prod}
