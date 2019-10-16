@@ -16,7 +16,7 @@ def handle(req):
     apps_url_str = urlunparse(apps_url)
 
     parsed_req = json.loads(req)
-    analysis_to_check = parsed_req["analysis"]
+    analysis_to_check = parsed_req["id"]
     user = parsed_req["user"]
 
     response  = requests.get(
