@@ -56,6 +56,10 @@ class UserInfoAPI extends RESTDataSource {
     async getSavedSearches(username) {
         return await this.get(`searches/${username}@iplantcollaborative.org`);
     }
+
+    async getPreferences(username) {
+        return await this.get(`preferences/${username}@iplantcollaborative.org`);
+    }
 }
 
 module.exports = {

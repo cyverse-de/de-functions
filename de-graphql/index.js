@@ -33,6 +33,9 @@ const typeDefs = gql`
         """A JSON encoded string containing the user's saved searches."""
         saved_searches: String
 
+        """A JSON encoded string containing the user's preferences."""
+        preferences: String
+
         """The webhooks the user has configured."""
         webhooks: [Webhook]
 
@@ -116,13 +119,17 @@ const resolvers = {
             return dataSources.userInfoAPI.getSession(user.username);
         },
 
+        preferences: async(user, _args, { dataSources }) => {
+            return dataSources.userInfoAPI.getPreferences(user.username);
+        },
+
         webhooks: async(user, _args, { dataSources }) => {
             return dataSources.appsAPI.getUserWebhooks(user.username);
         },
 
         accessible_apps: async(user, _args, { dataSources }) => {
             return dataSources.appsAPI.getAccessibleApps(user.username);
-        }
+        },
     },
 };
     
