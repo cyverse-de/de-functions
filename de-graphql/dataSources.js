@@ -33,8 +33,13 @@ class AppsAPI extends RESTDataSource {
     }
 
     async getUserWebhooks(username) {
-        const data = await this.get(`webhooks?user=${{username}}`);
+        const data = await this.get(`webhooks?user=${username}`);
         return data.webhooks;
+    }
+
+    async getAccessibleApps(username) {
+        const data = await this.get(`apps?user=${username}`);
+        return data.apps;
     }
 }
 
