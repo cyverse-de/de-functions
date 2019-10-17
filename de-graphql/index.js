@@ -1,53 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server');
-const { RESTDataSource } = require('apollo-datasource-rest');
-
-class FunctionAPI extends RESTDataSource {
-    constructor() {
-        super();
-        this.baseURL = process.env.GATEWAY;
-    }
-
-    async getUserInfo(username) {
-        var data =  await this.post(
-            'function/get-user-info',
-            {'username':username},
-        )
-
-        // Need to rename the id field to username
-        data = JSON.parse(data);
-        data.username = data.id
-        delete data.id
-        
-        return data;
-    }
-}
-
-class AppsAPI extends RESTDataSource {
-    constructor() {
-        super();
-        this.baseURL = process.env.APPS_URL;
-    }
-
-    async getUserInfo(username) {
-        const data = await this.get(`users/authenticated?user=${username}`);
-        return data.id;
-    }
-}
-
-class UserInfoAPI extends RESTDataSource {
-    constructor() {
-        super();
-        this.baseURL = process.env.USER_INFO_URL;
-    }
-
-    async getSession(username) {
-        return await this.get(`sessions/${username}@iplantcollaborative.org`);
-    }
-
-    async getSavedSearches(username) {
-        return await this.get(`searches/${username}@iplantcollaborative.org`);
-    }
-}
+const { FunctionAPI, AppsAPI, UserInfoAPI } = require('./dataSources');
 
 const typeDefs = gql`
     type User {
@@ -61,6 +13,20 @@ const typeDefs = gql`
         source_id: String
         session: String
         saved_searches: String
+        webhooks: [Webhook]
+    }
+
+    type WebhookType {
+        id: String
+        type: String
+        template: String
+    }
+
+    type Webhook {
+        id: String
+        url: String
+        topics: [String]
+        type: WebhookType
     }
 
     type Query {
@@ -86,8 +52,12 @@ const resolvers = {
 
         session: async(user, _args, { dataSources }) => {
             return dataSources.userInfoAPI.getSession(user.username);
-        }
-    }
+        },
+
+        webhooks: async(user, _args, { dataSources }) => {
+            return dataSources.appsAPI.getUserWebhooks(user.username);
+        },
+    },
 };
     
 const server = new ApolloServer({
