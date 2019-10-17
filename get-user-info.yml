@@ -8,5 +8,5 @@ functions:
     handler: ./get-user-info
     image: discoenv/fn-get-user-info:${DOCKER_TAG:-latest}
     environment:
-      IPLANT_GROUPS_URL: http://${IPLANT_GROUPS_HOST:-iplant-groups}.${SERVICE_NAMESPACE:-prod}
+      IPLANT_GROUPS_URL: http://${IPLANT_GROUPS_HOST:-iplant-groups}.${SERVICE_NAMESPACE:-prod}:${IPLANT_GROUPS_PORT:-80}
       IPLANT_GROUPS_USER: ${IPLANT_GROUPS_USER:-grouper}

@@ -8,5 +8,5 @@ functions:
     handler: ./filter-running-analyses
     image: discoenv/fn-filter-running-analyses${DOCKER_TAG:-latest}
     environment:
-      APPS_URL: http://${APPS_URL:-apps}.${SERVICE_NAMESPACE:-prod}
+      APPS_URL: http://${APPS_HOST:-apps}.${SERVICE_NAMESPACE:-prod}:${APPS_PORT:-80}
       APPS_USER: ${APPS_USER:-apps}

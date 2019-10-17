@@ -9,4 +9,5 @@ functions:
     image: discoenv/de-graphql:${DOCKER_TAG:-latest}
     environment:
       GATEWAY: ${GATEWAY:-http://127.0.0.1:8080}
-      APPS_URL: http://${APPS_URL:-apps}.${SERVICE_NAMESPACE:-prod}
+      APPS_URL: http://${APPS_HOST:-apps}.${SERVICE_NAMESPACE:-prod}:${APPS_PORT:-80}
+      USER_INFO_URL: http://${USER_INFO_HOST:-user-info}:${SERVICE_NAMESPACE:-prod}:${USER_INFO_PORT:-10000}

@@ -8,4 +8,4 @@ functions:
     handler: ./get-analysis-info
     image: discoenv/fn-get-analysis-info:${DOCKER_TAG:-latest}
     environment:
-      APPS_URL: http://${APPS_URL:-apps}.${SERVICE_NAMESPACE:-prod}
+      APPS_URL: http://${APPS_HOST:-apps}.${SERVICE_NAMESPACE:-prod}:${APPS_PORT:-80}
