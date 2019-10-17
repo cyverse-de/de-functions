@@ -36,11 +36,29 @@ const typeDefs = gql`
         """A JSON encoded string containing the user's preferences."""
         preferences: String
 
+        """The user's workspace information."""
+        workspace: Workspace
+
+        """The user's system_id configuration."""
+        system_ids: SystemIDs
+
         """The webhooks the user has configured."""
         webhooks: [Webhook]
 
         """The list of Apps that the user has access to."""
         accessible_apps: [App]
+    }
+
+    type Workspace {
+        id: String
+        root_category_id: String
+        is_public: Boolean
+        new_workspace: Boolean
+    }
+
+    type SystemIDs {
+        de_system_id: String
+        all_system_ids: [String]
     }
 
     type WebhookType {
@@ -115,20 +133,28 @@ const resolvers = {
             return dataSources.userInfoAPI.getSavedSearches(user.username);
         },
 
-        session: async(user, _args, { dataSources }) => {
+        session: async (user, _args, { dataSources }) => {
             return dataSources.userInfoAPI.getSession(user.username);
         },
 
-        preferences: async(user, _args, { dataSources }) => {
+        preferences: async (user, _args, { dataSources }) => {
             return dataSources.userInfoAPI.getPreferences(user.username);
         },
 
-        webhooks: async(user, _args, { dataSources }) => {
+        webhooks: async (user, _args, { dataSources }) => {
             return dataSources.appsAPI.getUserWebhooks(user.username);
         },
 
-        accessible_apps: async(user, _args, { dataSources }) => {
+        accessible_apps: async (user, _args, { dataSources }) => {
             return dataSources.appsAPI.getAccessibleApps(user.username);
+        },
+
+        workspace: async (user, _args, { dataSources }) => {
+            return dataSources.appsAPI.getWorkspace(user.username);
+        },
+
+        system_ids: async (user, _args, { dataSources }) => {
+            return dataSources.appsAPI.getSystemIDs(user.username);
         },
     },
 };

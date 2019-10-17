@@ -41,6 +41,17 @@ class AppsAPI extends RESTDataSource {
         const data = await this.get(`apps?user=${username}`);
         return data.apps;
     }
+
+    async getSystemIDs(username) {
+        const data = await this.get(`bootstrap?user=${username}`);
+        return data.system_ids;
+    }
+
+    async getWorkspace(username) {
+        const data = await this.get(`workspaces?user=${username}`);
+        const { 'user_id': _, ...newData } = data;
+        return newData;
+    }
 }
 
 class UserInfoAPI extends RESTDataSource {
