@@ -34,16 +34,33 @@ class AppsAPI extends RESTDataSource {
     }
 }
 
+class UserInfoAPI extends RESTDataSource {
+    constructor() {
+        super();
+        this.baseURL = process.env.USER_INFO_URL;
+    }
+
+    async getSession(username) {
+        return await this.get(`sessions/${username}@iplantcollaborative.org`);
+    }
+
+    async getSavedSearches(username) {
+        return await this.get(`searches/${username}@iplantcollaborative.org`);
+    }
+}
+
 const typeDefs = gql`
     type User {
         id: String
         username: String
         name: String
         last_name: String
-        full_name: String
+        first_name: String
         email: String
         institution: String
         source_id: String
+        session: String
+        saved_searches: String
     }
 
     type Query {
@@ -59,8 +76,16 @@ const resolvers = {
     },
 
     User: {
-        id: async(user, _args, { dataSources }) => {
+        id: async (user, _args, { dataSources }) => {
             return dataSources.appsAPI.getUserInfo(user.username)
+        },
+
+        saved_searches: async (user, _args, { dataSources }) => {
+            return dataSources.userInfoAPI.getSavedSearches(user.username);
+        },
+
+        session: async(user, _args, { dataSources }) => {
+            return dataSources.userInfoAPI.getSession(user.username);
         }
     }
 };
@@ -72,6 +97,7 @@ const server = new ApolloServer({
         return {
             functionAPI: new FunctionAPI(),
             appsAPI: new AppsAPI(),
+            userInfoAPI: new UserInfoAPI(),
         };
     },
 });
