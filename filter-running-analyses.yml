@@ -6,6 +6,6 @@ functions:
   filter-running-analyses:
     lang: python3-flask
     handler: ./filter-running-analyses
-    image: discoenv/fn-filter-running-analyses${DOCKER_TAG:-latest}
+    image: discoenv/fn-filter-running-analyses:${DOCKER_TAG:-latest}
     environment:
       GRAPHQL_URL: http://${GRAPHQL_HOST:-de-graphql}.${SERVICE_NAMESPACE:-prod}
