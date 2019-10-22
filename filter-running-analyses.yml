@@ -8,5 +8,4 @@ functions:
     handler: ./filter-running-analyses
     image: discoenv/fn-filter-running-analyses${DOCKER_TAG:-latest}
     environment:
-      APPS_URL: http://${APPS_HOST:-apps}.${SERVICE_NAMESPACE:-prod}
-      APPS_USER: ${APPS_USER:-apps}
+      GRAPHQL_URL: http://${GRAPHQL_HOST:-de-graphql}.${SERVICE_NAMESPACE:-prod}

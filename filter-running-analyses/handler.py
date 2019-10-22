@@ -1,3 +1,13 @@
+# filter-running-analyses
+#
+# Accepts a list of analysis ID and filters out those that are listed as 
+# Running by the DE DB.
+# 
+# A use case would be to get the list of VICE analyses running in the k8s
+# cluster with the vice-running-in-cluster function and then use this function 
+# to filter out the analyses that are marked as running in DB. The result 
+# would be a list of analyses that are running when they probably shouldn't be.
+
 import json
 import os
 import logging
@@ -5,41 +15,40 @@ import logging
 from urllib.parse import urlparse, urlunparse
 
 import requests
-import requests.exceptions as HTTPError
 
 def handle(req):
-    apps_base_url = os.environ["APPS_URL"]
-    apps_user = os.environ["APPS_USER"]
-
-    apps_url = urlparse(apps_base_url)
-    apps_url = apps_url._replace(path="/analyses")
-    apps_url_str = urlunparse(apps_url)
-
-    logging.warning("apps url: %s" % apps_url_str)
+    graphql_url = os.environ["GRAPHQL_URL"]
 
     parsed_req = json.loads(req)
     analyses_to_check = parsed_req["analyses"]
 
-    retval = {
-        "analyses" : []
-    }
-
     logging.warning("analyses to check: %s" % analyses_to_check)
-    for analysis in analyses_to_check:
-        response = requests.get(
-            apps_url_str,
-            params={
-                'user' : apps_user,
-                'filter' : json.dumps([{'field':'id', 'value': analysis}])
+
+    # Get the list of running analyses from the DE DB
+    response = requests.post(
+        graphql_url,
+        json={
+            'query' : """
+                query GetAnalysesByStatus($status: String!) {
+                    analysesByStatus(status: $status) {
+                        id
+                    }
+                }
+            """,
+            'variables' : {
+                'status' : "Running"
             }
-        )
+        }
+    )
 
-        parsed_response = response.json()
+    response.raise_for_status()
 
-        logging.warning("parsed response: %s" % parsed_response)
+    logging.warning("response %s" % response.text)
 
-        for lookup in parsed_response["analyses"]:
-            if not lookup["status"].lower() in ["completed", "failed", "cancelled", "canceled"]:
-                retval["analyses"].append(analysis)
-
-    return json.dumps(retval)
+    parsed_results = response.json()
+    running_analyses = list(map(lambda x : x["id"], parsed_results["data"]["analysesByStatus"]))
+    filtered_list = list(filter(lambda x : not x in running_analyses, analyses_to_check))
+    
+    return json.dumps({
+        "analyses" : filtered_list
+    })
