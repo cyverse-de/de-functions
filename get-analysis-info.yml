@@ -8,4 +8,4 @@ functions:
     handler: ./get-analysis-info
     image: discoenv/fn-get-analysis-info:${DOCKER_TAG:-latest}
     environment:
-      APPS_URL: http://${APPS_URL:-apps}.${SERVICE_NAMESPACE:-prod}
+      GRAPHQL_URL: http://${GRAPHQL_HOST:-de-graphql}.${SERVICE_NAMESPACE:-prod}
