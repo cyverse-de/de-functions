@@ -4,9 +4,8 @@ provider:
   gateway: ${GATEWAY:-http://127.0.0.1:8080}
 functions:
   get-analysis-id:
-    lang: golang-middleware
+    lang: python3-flask
     handler: ./get-analysis-id
     image: discoenv/fn-get-analysis-id:${DOCKER_TAG:-latest}
     environment:
-      APPS_URL: http://${APPS_HOST:-apps}.${SERVICE_NAMESPACE:-prod}
-      APPS_USER: ${APPS_USER:-administrator}
+      GRAPHQL_URL: http://${GRAPHQL_HOST:-de-graphql}.${SERVICE_NAMESPACE:-prod}:${GRAPHQL_PORT:-80}
