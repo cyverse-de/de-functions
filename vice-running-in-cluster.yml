@@ -4,11 +4,10 @@ provider:
   gateway: ${GATEWAY:-http://127.0.0.1:8080}
 functions:
   vice-running-in-cluster:
-    lang: golang-middleware
+    lang: python3-flask
     handler: ./vice-running-in-cluster
     image: discoenv/fn-vice-running-in-cluster:${DOCKER_TAG:-latest}
-    environment:
-      GATEWAY: ${GATEWAY_IN_CLUSTER:-http://gateway.openfaas:8080}
-      VICE_NAMESPACE: ${VICE_NAMESPACE:-vice-apps}
     annotations:
       com.openfaas.serviceaccount: ${K8S_API_SVCACCOUNT:-openfaas}
+    environment:
+      GRAPHQL_URL: http://${GRAPHQL_HOST:-de-graphql}.${SERVICE_NAMESPACE:-prod}:${GRAPHQL_PORT:-80}
