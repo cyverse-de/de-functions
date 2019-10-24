@@ -28,18 +28,20 @@ def handle(req):
                             username
                             status
                             system_id
-                            startdate
+                            start_date
                             planned_end_date
-                            enddate
-                            resultfolderid
+                            end_date
+                            result_folder_path
                             type
                             subdomain
                             deleted
                             notify
-                            app_id
-                            app_name
-                            app_description
-                            
+                            app {
+                                id
+                                name
+                                description
+                            }
+
                         }
                     }
                 """,
