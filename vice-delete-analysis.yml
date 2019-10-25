@@ -1,0 +1,14 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: ${GATEWAY:-http://127.0.0.1:8080}
+functions:
+  vice-delete-analysis:
+    lang: python3-flask
+    handler: ./vice-delete-analysis
+    image: discoenv/fn-vice-delete-analysis:${DOCKER_TAG:-latest}
+    annotations:
+      com.openfaas.serviceaccount: ${K8S_API_SVCACCOUNT:-openfaas}
+    environment:
+      GRAPHQL_URL: http://${GRAPHQL_HOST:-de-graphql}.${SERVICE_NAMESPACE:-prod}
+
