@@ -1,0 +1,12 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: ${GATEWAY:-http://127.0.0.1:8080}
+functions:
+  vice-save-and-exit:
+    lang: python3-flask
+    handler: ./vice-save-and-exit
+    image: discoenv/fn-vice-save-and-exit:${DOCKER_TAG:-latest}
+    environment:
+     GRAPHQL_URL: http://${GRAPHQL_HOST:-de-graphql}.${SERVICE_NAMESPACE:-prod}:${GRAPHQL_PORT:-80}
+     APP_EXPOSER_URL: http://${APP_EXPOSER_HOST:-app-exposer}.${SERVICE_NAMESPACE:-prod}:${APP_EXPOSER_PORT:-80}
