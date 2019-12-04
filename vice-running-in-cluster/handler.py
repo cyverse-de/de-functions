@@ -43,6 +43,9 @@ def get_analysis_id(external_id):
 
     parsed_response = response.json()
 
+    if parsed_response["data"] == None or parsed_response["data"]["analysis"] == None:
+        return ""
+
     return parsed_response["data"]["analysis"]["id"]
 
 def handle(req):
@@ -52,8 +55,10 @@ def handle(req):
 
     response = api.list_namespaced_deployment(vice_namespace)
     external_ids = list(map(lambda x : x.metadata.name, response.items))
+    print("external ids: %s" % external_ids, flush=True)
     analysis_ids = list(map(get_analysis_id, external_ids))
 
     return json.dumps({
-        "analyses" : analysis_ids
+        "analyses" : list(filter(lambda x: x, analysis_ids)),
+        "external_ids" : external_ids
     })
